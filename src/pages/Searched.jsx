@@ -55,6 +55,10 @@ const Card = styled.div`
     text-align: center;
     padding: 1rem;
   }
+  // Neumorphism styling
+  background: #e0e0e0;
+  box-shadow: 10px 10px 20px #bebebe, -10px -10px 20px #ffffff;
+  border-radius: 2rem;
 `;
 
 export default Searched;

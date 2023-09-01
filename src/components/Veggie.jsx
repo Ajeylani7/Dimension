@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { Splide, SplideSlide } from "@splidejs/react-splide";
-import "@splidejs/react-splide/css";
 import { Link } from "react-router-dom";
+import { TransitionGroup, CSSTransition } from "react-transition-group";
 
 function Veggie() {
   const [veggie, setVeggie] = useState([]);
@@ -27,35 +26,23 @@ function Veggie() {
   };
 
   return (
-    <div>
-      <Wrapper>
-        <h3>Vegetarian Picks</h3>
-
-        <Splide
-          options={{
-            perPage: 3,
-            arrows: false,
-            pagination: true,
-            drag: "free",
-            gap: "5rem",
-          }}
-        >
-          {veggie.map((recipe) => {
-            return (
-              <SplideSlide key={recipe.id}>
-                <Card>
-                  <Link to={"/recipe/" + recipe.id}>
-                    <p>{recipe.title}</p>
-                    <img src={recipe.image} alt={recipe.title} />
-                    <Gradient />
-                  </Link>
-                </Card>
-              </SplideSlide>
-            );
-          })}
-        </Splide>
-      </Wrapper>
-    </div>
+    <Wrapper>
+      <h3>Vegetarian Picks</h3>
+      <Grid>
+        <TransitionGroup component={null}>
+          {veggie.map((recipe) => (
+            <CSSTransition key={recipe.id} timeout={500} classNames="fade">
+              <FadeInCard>
+                <Link to={"/recipe/" + recipe.id}>
+                  <img src={recipe.image} alt={recipe.title} />
+                  <CardText>{recipe.title}</CardText>
+                </Link>
+              </FadeInCard>
+            </CSSTransition>
+          ))}
+        </TransitionGroup>
+      </Grid>
+    </Wrapper>
   );
 }
 
@@ -63,44 +50,52 @@ const Wrapper = styled.div`
   margin: 4rem 0rem;
 `;
 
-const Card = styled.div`
-  min-height: 25rem;
-  border-radius: 2rem;
-  overflow: hidden;
-  position: relative;
-
-  img {
-    border-radius: 2rem;
-    position: absolute;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  p {
-    position: absolute;
-    z-index: 10;
-    bottom: 0%;
-    transform: transalte(-50%, 0%);
-    color: white;
-    width: 100%;
-    text-align: center;
-    font-weight: 600;
-    font-size: 1rem;
-    height: 40%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  grid-gap: 3rem;
 `;
 
-const Gradient = styled.div`
-  z-index: 3;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
+const Card = styled.div`
+  img {
+    width: 100%;
+    border-radius: 2rem;
+  }
+  a {
+    text-decoration: none;
+    display: block;
+  }
+
+  box-shadow: 10px 10px 20px #bebebe, -10px -10px 20px #ffffff;
+  border-radius: 2rem;
+`;
+
+const CardText = styled.h4`
+  text-align: center;
+  padding: 1rem;
+  color: black;
+  font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 0 0 2rem 2rem;
+`;
+
+const FadeInCard = styled(Card)`
+  &.fade-enter {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  &.fade-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 500ms, transform 500ms;
+  }
+  &.fade-exit {
+    opacity: 1;
+  }
+  &.fade-exit-active {
+    opacity: 0;
+    transition: opacity 500ms;
+  }
 `;
 
 export default Veggie;
